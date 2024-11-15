@@ -12,8 +12,18 @@ namespace zeromq_test_client
 
         static void Main(string[] args)
         {
+            // Обработка закрытия консоли
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                e.Cancel = true; // Предотвращаем немедленное завершение
+                Console.WriteLine("Завершение основного приложения...");
+
+                // Завершение дочернего процесса
+                StopChildProcess();
+            };
+
             // Запуск дочернего процесса
-            //StartChildProcess();
+            StartChildProcess();
 
             using (var client = new RequestSocket(">tcp://127.0.0.1:5556"))
             {
@@ -36,7 +46,7 @@ namespace zeromq_test_client
                     if (input == "exit")
                     {
                         // Завершение дочернего процесса
-                        //StopChildProcess();
+                        StopChildProcess();
 
                         break;
                     }
@@ -52,7 +62,7 @@ namespace zeromq_test_client
             _childProcess = new Process();
 
             // Используем относительный путь
-            _childProcess.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "zeromq_test_server.exe");
+            _childProcess.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "\\win-x64\\zeromq_test_server");
 
             // Без оконного режима
             //_childProcess.StartInfo.UseShellExecute = false;
